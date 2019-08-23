@@ -15,11 +15,17 @@ class Model:
         self.model = load_model(model_path)
         self.encoder = pickle.load(open(encoder_path, "rb"))
 
-    def predcit(self, image_path = ""):
+    def predict(self, image_path = "test.JPG"):
+
         image = cv2.imread(image_path)
-        image_resize = np.array(cv2.resize(image, (256, 256)))
+        image_resize = np.array(cv2.resize(image, (256, 256), interpolation=cv2.INTER_AREA))
         image_resize = np.reshape(image_resize, (1, 256, 256, 3))
-        prediciton = self.model.predict(image_resize)
-        return self.encoder.inverse_transform(prediciton)
+        prediction = self.model.predict(image_resize)
+        #   print(prediction.argmax())
+        return self.encoder.inverse_transform([prediction.argmax()])
 
-
+def main():
+    model = Model()
+    print(model.predict())
+if __name__ == "__main__":
+    main()
